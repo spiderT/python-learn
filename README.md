@@ -177,6 +177,24 @@ Options and arguments (and corresponding environment variables):
 
 ## 2. Python 变量类型
 
+### 2.1. 变量赋值
+
+```py
+counter = 100; # 赋值整型变量
+miles = 1000.0; # 浮点型
+name = "John"; # 字符串
+
+print(counter)
+print(miles)
+print(name)
+```
+
+### 2.2. 多个变量赋值
+
+
+
+
+
 
 
 
