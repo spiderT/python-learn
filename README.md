@@ -1426,15 +1426,14 @@ reload(module_name)
 
 ### 10.1. 读取键盘输入
 
-Python提供了两个内置函数从标准输入读入一行文本，默认的标准输入是键盘。如下：  
+(demos/IO/input.py)
 
-raw_input  
-input  
+input函数  
 
-#### 10.1.1. raw_input函数
-
-
-
+```py
+str = input("请输入：")
+print("你输入的内容是: ", str)
+```
 
 
 
