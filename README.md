@@ -1435,17 +1435,718 @@ str = input("请输入：")
 print("你输入的内容是: ", str)
 ```
 
+### 10.2. 打开和关闭文件
+
+(demos/IO/file.py)  
+
+Python 提供了必要的函数和方法进行默认情况下的文件基本操作。你可以用 file 对象做大部分的文件操作。
+
+#### 10.2.1. open 函数
+
+语法：
+
+```text
+file object = open(file_name [, access_mode][, buffering])
+```
+
+- file_name：file_name变量是一个包含了你要访问的文件名称的字符串值。
+- access_mode：access_mode决定了打开文件的模式：只读，写入，追加等。所有可取值见如下的完全列表。这个参数是非强制的，默认文件访问模式为只读(r)。
+- buffering: 如果buffering的值被设为0，就不会有寄存。如果buffering的值取1，访问文件时会寄存行。如果将buffering的值设为大于1的整数，表明了这就是的寄存区的缓冲大小。如果取负值，寄存区的缓冲大小则为系统默认。
+
+不同模式打开文件的完全列表：
+
+![file](images/py30.png)
+
+![file](images/py31.png)
+
+![file](images/py32.png)
+
+#### 10.2.2. File对象的属性
+
+一个文件被打开后，你有一个file对象，你可以得到有关该文件的各种信息。  
+
+file.closed 返回true如果文件已被关闭，否则返回false。  
+file.mode 返回被打开文件的访问模式。  
+file.name 返回文件的名称。  
+
+#### 10.2.3. close()方法
+
+File 对象的 close（）方法刷新缓冲区里任何还没写入的信息，并关闭该文件，这之后便不能再进行写入。  
+
+当一个文件对象的引用被重新指定给另一个文件时，Python 会关闭之前的文件。用 close（）方法关闭文件是一个很好的习惯。  
+
+语法：
+
+```text
+fileObject.close()
+```
+
+#### 10.2.4. write()方法
+
+write()方法可将任何字符串写入一个打开的文件。需要重点注意的是，Python字符串可以是二进制数据，而不是仅仅是文字。  
+
+write()方法不会在字符串的结尾添加换行符('\n')：  
+
+语法：
+
+```txt
+fileObject.write(string)
+```
+
+#### 10.2.5. read()方法
+
+read（）方法从一个打开的文件中读取一个字符串。需要重点注意的是，Python字符串可以是二进制数据，而不是仅仅是文字。  
+
+语法：
+
+```text
+fileObject.read([count])
+```
+
+被传递的参数是要从已打开文件中读取的字节计数。该方法从文件的开头开始读入，如果没有传入count，它会尝试尽可能多地读取更多的内容，很可能是直到文件的末尾。  
+
+#### 10.2.6. f.readline()
+
+f.readline() 会从文件中读取单独的一行。换行符为 '\n'。f.readline() 如果返回一个空字符串, 说明已经已经读取到最后一行。
+
+#### 10.2.7. f.readlines()
+
+f.readlines() 将返回该文件中包含的所有行。  
+
+如果设置可选参数 sizehint, 则读取指定长度的字节, 并且将这些字节按行分割。  
+
+#### 10.2.8. f.tell()
+
+f.tell() 返回文件对象当前所处的位置, 它是从文件开头开始算起的字节数。
+
+#### 10.2.9. f.seek()
+
+如果要改变文件当前的位置, 可以使用 f.seek(offset, from_what) 函数。  
+
+from_what 的值, 如果是 0 表示开头, 如果是 1 表示当前位置, 2 表示文件的结尾，例如：  
+
+seek(x,0) ： 从起始位置即文件首行首字符开始移动 x 个字符  
+seek(x,1) ： 表示从当前位置往后移动x个字符  
+seek(-x,2)： 表示从文件的结尾往前移动x个字符  
+
+### 10.3. pickle 模块
+
+python的pickle模块实现了基本的数据序列和反序列化。  
+
+通过pickle模块的序列化操作我们能够将程序中运行的对象信息保存到文件中去，永久存储。  
+
+通过pickle模块的反序列化操作，我们能够从文件中创建上一次程序保存的对象。  
+
+基本接口：  
+
+```text
+pickle.dump(obj, file, [,protocol])  
+```
+
+## 11. File(文件) 方法
+
+(demos/file)
+
+### 11.1. open() 方法
+
+用于打开一个文件，并返回文件对象，在对文件进行处理过程都需要使用到这个函数，如果该文件无法被打开，会抛出 OSError。  
+
+> 注意：使用 open() 方法一定要保证关闭文件对象，即调用 close() 方法。  
+
+open() 函数常用形式是接收两个参数：文件名(file)和模式(mode)。  
+
+完整的语法格式为：  
+
+```text
+open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)  
+```
+
+参数说明:  
+
+file: 必需，文件路径（相对或者绝对路径）。  
+mode: 可选，文件打开模式  
+buffering: 设置缓冲  
+encoding: 一般使用utf8  
+errors: 报错级别  
+newline: 区分换行符  
+closefd: 传入的file参数类型  
+opener: 设置自定义开启器，开启器的返回值必须是一个打开的文件描述符。  
+
+## 12. OS 文件/目录方法
+
+os 模块提供了非常丰富的方法用来处理文件和目录。常用的方法如下表所示：
+
+1. os.access(path, mode) 检验权限模式
+
+2. os.chdir(path) 改变当前工作目录
+
+3. os.chflags(path, flags) 设置路径的标记为数字标记。
+
+4. os.chmod(path, mode) 更改权限
+
+5. os.chown(path, uid, gid) 更改文件所有者
+
+6. os.chroot(path) 改变当前进程的根目录
+
+7. os.close(fd) 关闭文件描述符 fd
+
+8. os.closerange(fd_low, fd_high) 关闭所有文件描述符，从 fd_low (包含) 到 fd_high (不包含), 错误会忽略
+
+9. os.dup(fd) 复制文件描述符 fd
+
+10. os.dup2(fd, fd2) 将一个文件描述符 fd 复制到另一个 fd2
+
+11. os.fchdir(fd) 通过文件描述符改变当前工作目录
+
+12. os.fchmod(fd, mode) 改变一个文件的访问权限，该文件由参数fd指定，参数mode是Unix下的文件访问权限。
+
+13. os.fchown(fd, uid, gid) 修改一个文件的所有权，这个函数修改一个文件的用户ID和用户组ID，该文件由文件描述符fd指定。
+
+14. os.fdatasync(fd) 强制将文件写入磁盘，该文件由文件描述符fd指定，但是不强制更新文件的状态信息。
+
+15. os.fdopen(fd[, mode[, bufsize]])  通过文件描述符 fd 创建一个文件对象，并返回这个文件对象
+
+16. os.fpathconf(fd, name) 返回一个打开的文件的系统配置信息。name为检索的系统配置的值，它也许是一个定义系统值的字符串，这些名字在很多标准中指定（POSIX.1, Unix 95, Unix 98, 和其它）。
+
+17. os.fstat(fd) 返回文件描述符fd的状态，像stat()。
+
+18. os.fstatvfs(fd) 返回包含文件描述符fd的文件的文件系统的信息，Python 3.3 相等于 statvfs()。
+
+19. os.fsync(fd) 强制将文件描述符为fd的文件写入硬盘。
+
+20. os.ftruncate(fd, length) 裁剪文件描述符fd对应的文件, 所以它最大不能超过文件大小。
+
+21. os.getcwd() 返回当前工作目录
+
+22. os.getcwdu() 返回一个当前工作目录的Unicode对象
+
+23. os.isatty(fd) 如果文件描述符fd是打开的，同时与tty(-like)设备相连，则返回true, 否则False。
+
+24. os.lchflags(path, flags) 设置路径的标记为数字标记，类似 chflags()，但是没有软链接
+
+25. os.lchmod(path, mode) 修改连接文件权限
+
+26. os.lchown(path, uid, gid) 更改文件所有者，类似 chown，但是不追踪链接。
+
+27. os.link(src, dst) 创建硬链接，名为参数 dst，指向参数 src
+
+28. os.listdir(path) 返回path指定的文件夹包含的文件或文件夹的名字的列表。
+
+29. os.lseek(fd, pos, how) 设置文件描述符 fd当前位置为pos, how方式修改: SEEK_SET 或者 0 设置从文件开始的计算的pos; SEEK_CUR或者 1 则从当前位置计算; os.SEEK_END或者2则从文件尾部开始. 在unix，Windows中有效
+
+30. os.lstat(path) 像stat(),但是没有软链接
+
+31. os.major(device) 从原始的设备号中提取设备major号码 (使用stat中的st_dev或者st_rdev field)。
+
+32. os.makedev(major, minor) 以major和minor设备号组成一个原始设备号
+
+33. os.makedirs(path[, mode]) 递归文件夹创建函数。像mkdir(), 但创建的所有intermediate-level文件夹需要包含子文件夹。
+
+34. os.minor(device) 从原始的设备号中提取设备minor号码 (使用stat中的st_dev或者st_rdev field )。
+
+35. os.mkdir(path[, mode]) 以数字mode的mode创建一个名为path的文件夹.默认的 mode 是 0777 (八进制)。
+
+36. os.mkfifo(path[, mode]) 创建命名管道，mode 为数字，默认为 0666 (八进制)
+
+37. os.mknod(filename[, mode=0600, device]) 创建一个名为filename文件系统节点（文件，设备特别文件或者命名pipe）。
+
+38. os.open(file, flags[, mode]) 打开一个文件，并且设置需要的打开选项，mode参数是可选的
+
+39. os.openpty() 打开一个新的伪终端对。返回 pty 和 tty的文件描述符。
+
+40. os.pathconf(path, name) 返回相关文件的系统配置信息。
+
+41. os.pipe() 创建一个管道. 返回一对文件描述符(r, w) 分别为读和写
+
+42. os.popen(command[, mode[, bufsize]]) 从一个 command 打开一个管道
+43. os.read(fd, n) 从文件描述符 fd 中读取最多 n 个字节，返回包含读取字节的字符串，文件描述符 fd对应文件已达到结尾, 返回一个空字符串。
+44. os.readlink(path) 返回软链接所指向的文件
+45. os.remove(path) 删除路径为path的文件。如果path 是一个文件夹，将抛出OSError; 查看下面的rmdir()删除一个 directory。
+46. os.removedirs(path) 递归删除目录。
+47. os.rename(src, dst) 重命名文件或目录，从 src 到 dst
+48. os.renames(old, new) 递归地对目录进行更名，也可以对文件进行更名。
+49. os.rmdir(path) 删除path指定的空目录，如果目录非空，则抛出一个OSError异常。
+50. os.stat(path) 获取path指定的路径的信息，功能等同于C API中的stat()系统调用。
+51. os.stat_float_times([newvalue]) 决定stat_result是否以float对象显示时间戳
+
+52. os.statvfs(path) 获取指定路径的文件系统统计信息
+53. os.symlink(src, dst) 创建一个软链接
+54. os.tcgetpgrp(fd) 返回与终端fd（一个由os.open()返回的打开的文件描述符）关联的进程组
+55. os.tcsetpgrp(fd, pg) 设置与终端fd（一个由os.open()返回的打开的文件描述符）关联的进程组为pg。
+56. os.tempnam([dir[, prefix]]) Python3 中已删除。返回唯一的路径名用于创建临时文件。
+57. os.tmpfile() Python3 中已删除。返回一个打开的模式为(w+b)的文件对象 .这文件对象没有文件夹入口，没有文件描述符，将会自动删除。
+58. os.tmpnam() Python3 中已删除。为创建一个临时文件返回一个唯一的路径
+59. os.ttyname(fd) 返回一个字符串，它表示与文件描述符fd 关联的终端设备。如果fd 没有与终端设备关联，则引发一个异常。
+60. os.unlink(path) 删除文件路径
+61. os.utime(path, times) 返回指定的path文件的访问和修改的时间。
+62. os.walk(top[, topdown=True[, onerror=None[, followlinks=False]]]) 输出在文件夹中的文件名通过在树中游走，向上或者向下。
+63. os.write(fd, str)写入字符串到文件描述符 fd中. 返回实际写入的字符串长度
+64. os.path 模块 获取文件的属性信息。
+65. os.pardir() 获取当前目录的父目录，以字符串形式显示目录名。
+
+## 13. 错误和异常
+
+### 13.1. 语法错误
+
+这个例子中，函数 print() 被检查到有错误，是它前面缺少了一个冒号 : 。  
+
+语法分析器指出了出错的一行，并且在最先找到的错误的位置标记了一个小小的箭头。  
+
+```text
+>>> while True print('Hello world')
+  File "<stdin>", line 1, in ?
+    while True print('Hello world')
+                   ^
+SyntaxError: invalid syntax
+```
+
+### 13.2. 异常
+
+异常以不同的类型出现，这些类型都作为信息的一部分打印出来: 例子中的类型有 ZeroDivisionError，NameError 和 TypeError。  
+
+错误信息的前面部分显示了异常发生的上下文，并以调用栈的形式显示具体信息。  
+
+```text
+>>> 10 * (1/0)             # 0 不能作为除数，触发异常
+Traceback (most recent call last):
+  File "<stdin>", line 1, in ?
+ZeroDivisionError: division by zero
+>>> 4 + spam*3             # spam 未定义，触发异常
+Traceback (most recent call last):
+  File "<stdin>", line 1, in ?
+NameError: name 'spam' is not defined
+>>> '2' + 2               # int 不能与 str 相加，触发异常
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: can only concatenate str (not "int") to str
+```
+
+### 13.3. 异常处理
+
+#### 13.3.1. try/except
+
+以下例子中，让用户输入一个合法的整数，但是允许用户中断这个程序（使用 Control-C 或者操作系统提供的方法）。用户中断的信息会引发一个 KeyboardInterrupt 异常。  
+
+```py
+while True:
+    try:
+        x = int(input("请输入一个数字: "))
+        break
+    except ValueError:
+        print("您输入的不是数字，请再次尝试输入！")
+```
+
+try 语句按照如下方式工作；  
+
+首先，执行 try 子句（在关键字 try 和关键字 except 之间的语句）。  
+
+如果没有异常发生，忽略 except 子句，try 子句执行后结束。  
+
+如果在执行 try 子句的过程中发生了异常，那么 try 子句余下的部分将被忽略。如果异常的类型和 except 之后的名称相符，那么对应的 except 子句将被执行。  
+
+如果一个异常没有与任何的 except 匹配，那么这个异常将会传递给上层的 try 中。  
+
+一个 try 语句可能包含多个except子句，分别来处理不同的特定的异常。最多只有一个分支会被执行。  
+
+一个except子句可以同时处理多个异常，这些异常将被放在一个括号里成为一个元组，例如:
+
+```py
+except (RuntimeError, TypeError, NameError):
+    pass
+```
+
+最后一个except子句可以忽略异常的名称，它将被当作通配符使用。你可以使用这种方法打印一个错误信息，然后再次把异常抛出。  
+
+```py
+import sys
+
+try:
+    f = open('myfile.txt')
+    s = f.readline()
+    i = int(s.strip())
+except OSError as err:
+    print("OS error: {0}".format(err))
+except ValueError:
+    print("Could not convert data to an integer.")
+except:
+    print("Unexpected error:", sys.exc_info()[0])
+    raise
+```
+
+#### 13.3.2. try/except...else
+
+try/except 语句还有一个可选的 else 子句，如果使用这个子句，那么必须放在所有的 except 子句之后。  
+
+else 子句将在 try 子句没有发生任何异常的时候执行。  
+
+以下实例在 try 语句中判断文件是否可以打开，如果打开文件时正常的没有发生异常则执行 else 部分的语句，读取文件内容：
+
+```py
+for arg in sys.argv[1:]:
+    try:
+        f = open(arg, 'r')
+    except IOError:
+        print('cannot open', arg)
+    else:
+        print(arg, 'has', len(f.readlines()), 'lines')
+        f.close()
+```
+
+使用 else 子句比把所有的语句都放在 try 子句里面要好，这样可以避免一些意想不到，而 except 又无法捕获的异常。  
+
+异常处理并不仅仅处理那些直接发生在 try 子句中的异常，而且还能处理子句中调用的函数（甚至间接调用的函数）里抛出的异常。例如:
+
+```py
+>>> def this_fails():
+        x = 1/0
+   
+>>> try:
+        this_fails()
+    except ZeroDivisionError as err:
+        print('Handling run-time error:', err)
+   
+Handling run-time error: int division or modulo by zero
+```
+
+#### 13.3.3. try-finally 语句
+
+try-finally 语句无论是否发生异常都将执行最后的代码。  
+
+以下实例中 finally 语句无论异常是否发生都会执行：
+
+```py
+try:
+    runoob()
+except AssertionError as error:
+    print(error)
+else:
+    try:
+        with open('file.log') as file:
+            read_data = file.read()
+    except FileNotFoundError as fnf_error:
+        print(fnf_error)
+finally:
+    print('这句话，无论异常是否发生都会执行。')
+```
+
+### 13.4. 抛出异常
+
+Python 使用 raise 语句抛出一个指定的异常。  
+
+raise语法格式如下：
+
+```py
+raise [Exception [, args [, traceback]]]
+```
+
+以下实例如果 x 大于 5 就触发异常:
+
+```py
+x = 10
+if x > 5:
+    raise Exception('x 不能大于 5。x 的值为: {}'.format(x))
+```
+
+### 13.5. 用户自定义异常
+
+通过创建一个新的异常类来拥有自己的异常。异常类继承自 Exception 类，可以直接继承，或者间接继承，例如:
+
+```py
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+class InputError(Error):
+    """Exception raised for errors in the input.
+
+    Attributes:
+        expression -- input expression in which the error occurred
+        message -- explanation of the error
+    """
+
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+
+class TransitionError(Error):
+    """Raised when an operation attempts a state transition that's not
+    allowed.
+
+    Attributes:
+        previous -- state at beginning of transition
+        next -- attempted new state
+        message -- explanation of why the specific transition is not allowed
+    """
+
+    def __init__(self, previous, next, message):
+        self.previous = previous
+        self.next = next
+        self.message = message
+```
+
+### 13.6. 定义清理行为
+
+try 语句还有另外一个可选的子句，它定义了无论在任何情况下都会执行的清理行为。 例如:  
+
+```py
+try:
+   raise KeyboardInterrupt
+finally:
+   print('Goodbye, world!')
+```
+
+如果一个异常在 try 子句里（或者在 except 和 else 子句里）被抛出，而又没有任何的 except 把它截住，那么这个异常会在 finally 子句执行后被抛出。  
+
+在同一个 try 语句里包含 except 和 finally 子句:  
+
+```py
+def divide(x, y):
+        try:
+            result = x / y
+        except ZeroDivisionError:
+            print("division by zero!")
+        else:
+            print("result is", result)
+        finally:
+            print("executing finally clause")
+```
+
+### 13.7. 预定义的清理行为
+
+关键词 with 语句就可以保证诸如文件之类的对象在使用完之后一定会正确的执行他的清理方法:
+
+```py
+with open("myfile.txt") as f:
+    for line in f:
+        print(line, end="")
+```
+
+## 14. 面向对象
+
+### 14.1. 类定义
+
+语法格式如下：
+
+```text
+class ClassName:
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+### 14.2. 类对象
+
+(demos/class/demo1.py)
+
+类对象支持两种操作：属性引用和实例化。  
+
+属性引用使用和 Python 中所有的属性引用一样的标准语法：obj.name。  
+
+类对象创建后，类命名空间中所有的命名都是有效属性名。所以如果类定义是这样:  
+
+```py
+class MyClass:
+    """一个简单的类实例"""
+    i = 12345
+
+    def f(self):
+        return 'hello world'
 
 
+# 实例化类
+x = MyClass()
+
+# 访问类的属性和方法
+print("MyClass 类的属性 i 为：", x.i)
+print("MyClass 类的方法 f 输出为：", x.f())
+```
+
+类有一个名为 __init__() 的特殊方法（构造方法），该方法在类实例化时会自动调用，像下面这样：  
+
+```py
+def __init__(self):
+    self.data = []
+```
+
+#### 14.2.1. self代表类的实例，而非类
+
+(demos/class/demo3.py)
+
+类的方法与普通的函数只有一个特别的区别——它们必须有一个额外的第一个参数名称, 按照惯例它的名称是 self。  
+
+```py
+class Test:
+    def prt(self):
+        print(self)
+        print(self.__class__)
 
 
+t = Test()
+t.prt()
 
+# 同上
+# class Test:
+#     def prt(runoob):
+#         print(runoob)
+#         print(runoob.__class__)
 
+# t = Test()
+# t.prt()
+```
 
+self 代表的是类的实例，代表当前对象的地址，而 self.class 则指向类。
 
+### 14.3. 类的方法
 
+(demos/class/demo4.py)
 
+在类的内部，使用 def 关键字来定义一个方法，与一般函数定义不同，类方法必须包含参数 self, 且为第一个参数，self 代表的是类的实例。
 
+```py
+#类定义
+class people:
+    #定义基本属性
+    name = ''
+    age = 0
+    #定义私有属性,私有属性在类外部无法直接进行访问
+    __weight = 0
+    #定义构造方法
+    def __init__(self,n,a,w):
+        self.name = n
+        self.age = a
+        self.__weight = w
+    def speak(self):
+        print("%s 说: 我 %d 岁。" %(self.name,self.age))
+ 
+# 实例化类
+p = people('runoob',10,30)
+p.speak()
+```
 
+### 14.4. 继承
+
+(demos/class/demo5.py)  
+
+派生类的定义如下所示:
+
+```text
+class DerivedClassName(BaseClassName1):
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+BaseClassName（示例中的基类名）必须与派生类定义在一个作用域内。除了类，还可以用表达式，基类定义在另一个模块中时这一点非常有用:  
+
+class DerivedClassName(modname.BaseClassName):  
+
+### 14.5. 多继承
+
+多继承的类定义形如下例:
+
+```text
+class DerivedClassName(Base1, Base2, Base3):
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+### 14.6. 方法重写
+
+子类重写你父类的方法，实例如下：
+
+```py
+class Parent:        # 定义父类
+   def myMethod(self):
+      print ('调用父类方法')
+ 
+class Child(Parent): # 定义子类
+   def myMethod(self):
+      print ('调用子类方法')
+ 
+c = Child()          # 子类实例
+c.myMethod()         # 子类调用重写方法
+super(Child,c).myMethod() #用子类对象调用父类已被覆盖的方法
+```
+
+### 14.7. 类属性与方法
+
+(demos/class/demo6.py)  
+
+#### 14.7.1. 类的私有属性
+
+__private_attrs：两个下划线开头，声明该属性为私有，不能在类的外部被使用或直接访问。在类内部的方法中使用时 self.__private_attrs。  
+
+#### 14.7.2. 类的方法
+
+在类的内部，使用 def 关键字来定义一个方法，与一般函数定义不同，类方法必须包含参数 self，且为第一个参数，self 代表的是类的实例。  
+
+self 的名字并不是规定死的，也可以使用 this，但是最好还是按照约定是用 self。  
+
+#### 14.7.3. 类的私有方法
+
+__private_method：两个下划线开头，声明该方法为私有方法，只能在类的内部调用 ，不能在类的外部调用。self.__private_methods
+
+```py
+class JustCounter:
+    __secretCount = 0  # 私有变量
+    publicCount = 0    # 公开变量
+ 
+    def count(self):
+        self.__secretCount += 1
+        self.publicCount += 1
+        print (self.__secretCount)
+ 
+counter = JustCounter()
+counter.count()
+counter.count()
+print (counter.publicCount)
+print (counter.__secretCount)  # 报错，实例不能访问私有变量
+```
+
+类的专有方法：  
+__init__ : 构造函数，在生成对象时调用  
+__del__ : 析构函数，释放对象时使用  
+__repr__ : 打印，转换  
+__setitem__ : 按照索引赋值  
+__getitem__: 按照索引获取值  
+__len__: 获得长度  
+__cmp__: 比较运算  
+__call__: 函数调用  
+__add__: 加运算  
+__sub__: 减运算  
+__mul__: 乘运算  
+__truediv__: 除运算  
+__mod__: 求余运算  
+__pow__: 乘方  
+
+### 14.8. 运算符重载
+
+可以对类的专有方法进行重载，实例如下：
+
+```py
+class Vector:
+   def __init__(self, a, b):
+      self.a = a
+      self.b = b
+ 
+   def __str__(self):
+      return 'Vector (%d, %d)' % (self.a, self.b)
+   
+   def __add__(self,other):
+      return Vector(self.a + other.a, self.b + other.b)
+ 
+v1 = Vector(2,10)
+v2 = Vector(5,-2)
+print (v1 + v2)
+```
+
+## 15. 命名空间和作用域
 
 
