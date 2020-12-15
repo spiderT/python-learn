@@ -2149,4 +2149,455 @@ print (v1 + v2)
 
 ## 15. 命名空间和作用域
 
+### 15.1. 命名空间
+
+命名空间提供了在项目中避免名字冲突的一种方法。各个命名空间是独立的，没有任何关系的，所以一个命名空间中不能有重名，但不同的命名空间是可以重名而没有任何影响。  
+
+一般有三种命名空间：
+
+- 内置名称（built-in names）， Python 语言内置的名称，比如函数名 abs、char 和异常名称 BaseException、Exception 等等。
+- 全局名称（global names），模块中定义的名称，记录了模块的变量，包括函数、类、其它导入的模块、模块级的变量和常量。
+- 局部名称（local names），函数中定义的名称，记录了函数的变量，包括函数的参数和局部定义的变量。（类中定义的也是）
+
+命名空间查找顺序:  
+假设我们要使用变量 runoob，则 Python 的查找顺序为：局部的命名空间去 -> 全局命名空间 -> 内置命名空间。  
+如果找不到变量 runoob，它将放弃查找并引发一个 NameError 异常:  NameError: name 'runoob' is not defined。  
+
+命名空间的生命周期取决于对象的作用域，如果对象执行完成，则该命名空间的生命周期就结束。  
+
+### 15.2. 作用域
+
+(demos/scope/demo1.py)  
+
+在一个 python 程序中，直接访问一个变量，会从内到外依次访问所有的作用域直到找到，否则会报未定义的错误。  
+
+变量的作用域决定了在哪一部分程序可以访问哪个特定的变量名称。Python的作用域一共有4种，分别是：  
+
+- L（Local）：最内层，包含局部变量，比如一个函数/方法内部。
+- E（Enclosing）：包含了非局部(non-local)也非全局(non-global)的变量。比如两个嵌套函数，一个函数（或类） A 里面又包含了一个函数 B ，那么对于 B 中的名称来说 A 中的作用域就为 nonlocal。
+- G（Global）：当前脚本的最外层，比如当前模块的全局变量。
+- B（Built-in）： 包含了内建的变量/关键字等。，最后被搜索  
+
+规则顺序： L –> E –> G –> B。  
+
+内置作用域是通过一个名为 builtin 的标准模块来实现的，但是这个变量名自身并没有放入内置作用域内，所以必须导入这个文件才能够使用它。在Python3.0中，可以使用以下的代码来查看到底预定义了哪些变量:  
+
+```py
+import builtins
+dir(builtins)
+```
+
+Python 中只有模块（module），类（class）以及函数（def、lambda）才会引入新的作用域，其它的代码块（如 if/elif/else/、try/except、for/while等）是不会引入新的作用域的，也就是说这些语句内定义的变量，外部也可以访问.  
+
+### 15.3. 全局变量和局部变量
+
+(demos/scope/demo2.py)  
+
+定义在函数内部的变量拥有一个局部作用域，定义在函数外的拥有全局作用域。  
+
+局部变量只能在其被声明的函数内部访问，而全局变量可以在整个程序范围内访问。调用函数时，所有在函数内声明的变量名称都将被加入到作用域中。  
+
+```py
+total = 0  # 这是一个全局变量
+
+# 可写函数说明
+def sum(arg1, arg2):
+    #返回2个参数的和."
+    total = arg1 + arg2  # total在这里是局部变量.
+    print("函数内是局部变量 : ", total) # 30
+    return total
+
+#调用sum函数
+sum(10, 20)
+print("函数外是全局变量 : ", total) # 0
+
+```
+
+### 15.4. global 和 nonlocal关键字
+
+(demos/scope/demo3.py)  
+
+当内部作用域想修改外部作用域的变量时，就要用到global和nonlocal关键字了。
+
+```py
+num = 1
+
+def fun1():
+    global num  # 需要使用 global 关键字声明
+    print(num) # 1
+    num = 123
+    print(num) # 123
+
+fun1()
+print(num) # 123
+```
+
+如果要修改嵌套作用域（enclosing 作用域，外层非全局作用域）中的变量则需要 nonlocal 关键字了
+
+```py
+def outer():
+    num = 10
+    def inner():
+        nonlocal num  # nonlocal关键字声明
+        num = 100
+        print(num) # 100
+
+    inner()
+    print(num) # 100
+
+outer()
+```
+
+## 16. Python3 标准库概览
+
+### 16.1. 操作系统接口
+
+(demos/library/demo1.py)
+
+os模块提供了不少与操作系统相关联的函数。
+
+```py
+import os
+print(os.getcwd())  # 返回当前的工作目录
+```
+
+### 16.2. 文件通配符
+
+(demos/library/demo2.py)  
+
+glob模块提供了一个函数用于从目录通配符搜索中生成文件列表:
+
+```py
+import glob
+print(glob.glob('*.py'))  #  ?? []
+```
+
+### 16.3. 命令行参数
+
+通用工具脚本经常调用命令行参数。这些命令行参数以链表形式存储于 sys 模块的 argv 变量。例如在命令行中执行 "python demo.py one two three" 后可以得到以下输出结果:
+
+```py
+>>> import sys
+>>> print(sys.argv)
+['demo.py', 'one', 'two', 'three']
+```
+
+### 16.4. 错误输出重定向和程序终止
+
+sys 还有 stdin，stdout 和 stderr 属性，即使在 stdout 被重定向时，后者也可以用于显示警告和错误信息。
+
+```py
+>>> sys.stderr.write('Warning, log file not found starting a new one\n')
+Warning, log file not found starting a new one
+```
+
+### 16.5. 访问互联网
+
+(demos/library/demo3.py)  
+
+有几个模块用于访问互联网以及处理网络通信协议。其中最简单的两个是用于处理从 urls 接收的数据的 urllib.request 以及用于发送电子邮件的 smtplib.
+
+### 16.6. 数据压缩
+
+以下模块直接支持通用的数据打包和压缩格式：zlib，gzip，bz2，zipfile，以及 tarfile。
+
+```py
+>>> import zlib
+>>> s = b'witch which has which witches wrist watch'
+>>> len(s)
+41
+>>> t = zlib.compress(s)
+>>> len(t)
+37
+>>> zlib.decompress(t)
+b'witch which has which witches wrist watch'
+>>> zlib.crc32(s)
+226805979
+```
+
+### 16.7. 性能度量
+
+```py
+>>> from timeit import Timer
+>>> Timer('t=a; a=b; b=t', 'a=1; b=2').timeit()
+0.57535828626024577
+>>> Timer('a,b = b,a', 'a=1; b=2').timeit()
+0.54962537085770791
+```
+
+### 16.8. 测试模块
+
+doctest模块提供了一个工具，扫描模块并根据程序中内嵌的文档字符串执行测试。  
+
+```py
+def average(values):
+    """Computes the arithmetic mean of a list of numbers.
+
+    >>> print(average([20, 30, 70]))
+    40.0
+    """
+    return sum(values) / len(values)
+
+import doctest
+doctest.testmod()   # 自动验证嵌入测试
+```
+
+## 17. 正则表达式
+
+re 模块使 Python 语言拥有全部的正则表达式功能。  
+
+compile 函数根据一个模式字符串和可选的标志参数生成一个正则表达式对象。该对象拥有一系列方法用于正则表达式匹配和替换。  
+
+### 17.1. re.match函数
+
+(demos/regExp/demo1.py)  
+
+re.match 尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match()就返回none。  
+
+函数语法：
+
+```py
+re.match(pattern, string, flags=0)
+```
+
+pattern  匹配的正则表达式。  
+string   要匹配的字符串。  
+flags    标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。  
+
+匹配成功re.match方法返回一个匹配的对象，否则返回None。  
+
+```py
+import re
+print(re.match('www', 'www.baidu.com').span())  # 在起始位置匹配    (0, 3)
+print(re.match('com', 'www.baidu.com'))  # 不在起始位置匹配          None
+```
+
+可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。  
+
+group(num=0)   匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。  
+groups()       返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。  
+
+```py
+line = "Cats are smarter than dogs"
+# .* 表示任意匹配除换行符（\n、\r）之外的任何单个或多个字符
+matchObj = re.match(r'(.*) are (.*?) .*', line, re.M | re.I)
+
+if matchObj:
+    print("matchObj.group() : ", matchObj.group()) # Cats are smarter than dogs
+    print("matchObj.group(1) : ", matchObj.group(1)) # Cats
+    print("matchObj.group(2) : ", matchObj.group(2)) # smarter
+else:
+    print("No match!!")
+```
+
+### 17.2. re.search方法
+
+(demos/regExp/demo2.py)  
+
+re.search 扫描整个字符串并返回第一个成功的匹配。  
+
+函数语法：
+
+```py
+re.search(pattern, string, flags=0)
+```
+
+```py
+import re
+
+print(re.search('www', 'www.baidu.com').span())  # 在起始位置匹配 (0, 3)
+print(re.search('com', 'www.baidu.com').span())  # 不在起始位置匹配 (10, 13)
+```
+
+可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。  
+
+```py
+line = "Cats are smarter than dogs"
+
+searchObj = re.search(r'(.*) are (.*?) .*', line, re.M | re.I)
+
+if searchObj:
+    print("searchObj.group() : ", searchObj.group())  # Cats are smarter than dogs
+    print("searchObj.group(1) : ", searchObj.group(1)) # Cats
+    print("searchObj.group(2) : ", searchObj.group(2)) # Cats
+else:
+    print("Nothing found!!")
+```
+
+### 17.3. 检索和替换
+
+(demos/regExp/demo3.py)  
+
+re.sub用于替换字符串中的匹配项。  
+
+```py
+re.sub(pattern, repl, string, count=0, flags=0)
+```
+
+参数：  
+
+1. pattern : 正则中的模式字符串。  
+2. repl : 替换的字符串，也可为一个函数。  
+3. string : 要被查找替换的原始字符串。  
+4. count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。  
+5. flags : 编译时用的匹配模式，数字形式。  
+
+前三个为必选参数，后两个为可选参数。  
+
+```py
+import re
+
+phone = "2004-959-559 # 这是一个电话号码"
+
+# 删除注释
+num = re.sub(r'#.*$', "", phone)
+print("电话号码 : ", num)   # 2004-959-559 
+
+# 移除非数字的内容
+num = re.sub(r'\D', "", phone)
+print("电话号码 : ", num)  # 2004959559
+```
+
+### 17.4. compile 函数
+
+(demos/regExp/demo4.py)  
+
+compile 函数用于编译正则表达式，生成一个正则表达式（ Pattern ）对象，供 match() 和 search() 这两个函数使用。  
+
+语法格式为：
+
+```py
+re.compile(pattern[, flags])
+```
+
+参数：  
+
+- pattern : 一个字符串形式的正则表达式  
+- flags 可选，表示匹配模式，比如忽略大小写，多行模式等，具体参数为：  
+- re.I 忽略大小写  
+    re.L 表示特殊字符集 \w, \W, \b, \B, \s, \S 依赖于当前环境  
+    re.M 多行模式  
+    re.S 即为' . '并且包括换行符在内的任意字符（' . '不包括换行符）  
+    re.U 表示特殊字符集 \w, \W, \b, \B, \d, \D, \s, \S 依赖于 Unicode 字符属性数据库  
+    re.X 为了增加可读性，忽略空格和' # '后面的注释  
+
+```py
+import re
+pattern = re.compile(r'\d+')  # 用于匹配至少一个数字
+m = pattern.match('one12twothree34four')  # 查找头部，没有匹配
+print(m) # None
+m = pattern.match('one12twothree34four', 2, 10)  # 从'e'的位置开始匹配，没有匹配
+print(m) # None
+
+m = pattern.match('one12twothree34four', 3, 10)  # 从'1'的位置开始匹配，正好匹配
+print(m)  # 返回一个 Match 对象 <re.Match object; span=(3, 5), match='12'>
+m.group(0)  # 可省略 0
+m.start(0)  # 可省略 0
+m.end(0)  # 可省略 0
+m.span(0)  # 可省略 0
+```
+
+在上面，当匹配成功时返回一个 Match 对象，其中：  
+
+group([group1, …]) 方法用于获得一个或多个分组匹配的字符串，当要获得整个匹配的子串时，可直接使用 group() 或 group(0)；  
+start([group]) 方法用于获取分组匹配的子串在整个字符串中的起始位置（子串第一个字符的索引），参数默认值为 0；  
+end([group]) 方法用于获取分组匹配的子串在整个字符串中的结束位置（子串最后一个字符的索引+1），参数默认值为 0；  
+span([group]) 方法返回 (start(group), end(group))。  
+
+### 17.5. findall
+
+(demos/regExp/demo5.py)  
+
+在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果没有找到匹配的，则返回空列表。  
+
+注意： match 和 search 是匹配一次 findall 匹配所有。  
+
+语法格式为：  
+
+```text
+re.findall(pattern, string, flags=0)
+或
+pattern.findall(string[, pos[, endpos]])
+```
+
+参数：  
+
+pattern 匹配模式。  
+string 待匹配的字符串。  
+pos 可选参数，指定字符串的起始位置，默认为 0。  
+endpos 可选参数，指定字符串的结束位置，默认为字符串的长度。  
+
+```py
+import re
+
+result1 = re.findall(r'\d+', 'baidu 123 google 456')
+
+pattern = re.compile(r'\d+')  # 查找数字
+result2 = pattern.findall('baidu 123 google 456')
+result3 = pattern.findall('bai88du123google456', 0, 10)
+
+print(result1) # ['123', '456']
+print(result2) # ['123', '456']
+print(result3) # ['88', '123']
+```
+
+### 17.6. re.finditer
+
+和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。  
+
+re.finditer(pattern, string, flags=0)  
+
+参数：  
+pattern 匹配的正则表达式  
+string  要匹配的字符串。  
+flags   标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。  
+
+```py
+it = re.finditer(r"\d+", "12a32bc43jf3")
+for match in it:
+    print(match.group())
+# 12
+# 32
+# 43
+# 3
+```
+
+### 17.7. re.split
+
+split 方法按照能够匹配的子串将字符串分割后返回列表，它的使用形式如下：
+
+```text
+re.split(pattern, string[, maxsplit=0, flags=0])
+```
+
+pattern  匹配的正则表达式.  
+string   要匹配的字符串。  
+maxsplit 分隔次数，maxsplit=1 分隔一次，默认为 0，不限制次数。  
+flags    标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。  
+
+### 17.8. 正则表达式修饰符 - 可选标志
+
+正则表达式可以包含一些可选标志修饰符来控制匹配的模式。修饰符被指定为一个可选的标志。多个标志可以通过按位 OR(|) 它们来指定。如 re.I | re.M 被设置成 I 和 M 标志：  
+
+re.I  使匹配对大小写不敏感  
+re.L  做本地化识别（locale-aware）匹配  
+re.M  多行匹配，影响 ^ 和 $  
+re.S  使 . 匹配包括换行在内的所有字符  
+re.U  根据Unicode字符集解析字符。这个标志影响 \w, \W, \b, \B.  
+re.X  该标志通过给予你更灵活的格式以便你将正则表达式写得更易于理解。  
+
+### 17.9. 正则表达式模式
+
+![正则表达式模式](images/py33.png)
+
+## 18.CGI编程
+
+CGI(Common Gateway Interface),通用网关接口,它是一段程序,运行在服务器上如：HTTP服务器，提供同客户端HTML页面的接口.  
+
+
+
+
+
+
+
 
